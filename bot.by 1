@@ -1,0 +1,27 @@
+from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
+from telegram.ext import ApplicationBuilder, MessageHandler, filters, ContextTypes
+from telegram.ext import CommandHandler
+
+TOKEN = "8591455186:AAEsQQMeWX389CGf1t-TSnRqzcDRYVvwnfo"
+
+# دستور استارت
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text("سلام 👋 ربات فعال شد ✅")
+
+# تابعی برای بررسی پیام‌ها
+async def check_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    text = update.message.text
+
+    # بررسی اینکه پیام شامل 777 یا کلمه‌های مورد نظر است
+    if any(word in text for word in ["777", "انگور", "لیمو"]):
+        keyboard = [[InlineKeyboardButton("🎁 ورود به کانال ایرونی گیفت", url="https://t.me/ironi_gift")]]
+        reply_markup = InlineKeyboardMarkup(keyboard)
+        await update.message.reply_text("🎉 تبریک! شما برنده شده‌اید!", reply_markup=reply_markup)
+
+# اجرای ربات
+app = ApplicationBuilder().token(TOKEN).build()
+
+app.add_handler(CommandHandler("start", start))
+app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, check_message))
+
+app.run_polling()
